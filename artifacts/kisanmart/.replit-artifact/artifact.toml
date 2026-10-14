@@ -1,0 +1,35 @@
+kind = "web"
+previewPath = "/"
+title = "KisanMart"
+description = "A mobile-first agriculture marketplace foundation for Indian farmers, sellers, and administrators. Phase 1 provides a responsive starter experience and a secure Supabase foundation."
+version = "1.0.0"
+id = "artifacts/kisanmart"
+router = "path"
+
+[[services]]
+name = "web"
+paths = ["/"]
+localPort = 25427
+
+[services.development]
+run = "pnpm --filter @workspace/kisanmart run dev"
+
+[services.production.build]
+args = ["pnpm", "--filter", "@workspace/kisanmart", "run", "build"]
+
+[services.production.build.env]
+NODE_ENV = "production"
+
+[services.production.run]
+args = ["pnpm", "--filter", "@workspace/kisanmart", "run", "serve"]
+
+[services.production.run.env]
+PORT = "25427"
+NODE_ENV = "production"
+
+[services.production.health.startup]
+path = "/"
+
+[services.env]
+PORT = "25427"
+BASE_PATH = "/"

@@ -1,0 +1,331 @@
+# KisanMart — Phase 1 Planning-Only Mega Prompt
+
+You are a senior full-stack engineer, software architect, Supabase specialist, security engineer, and UI/UX designer.
+
+## PROJECT
+
+Build KisanMart, a premium, mobile-first, Amazon-style agriculture e-commerce platform for Indian farmers.
+
+The platform will sell fertilizers, seeds, crop protection products, farm tools, irrigation equipment, sprayers, animal feed, and organic farming inputs.
+
+Target users are farmers, agricultural sellers, and administrators in India. The interface must eventually support English, Telugu, and Hindi.
+
+## CRITICAL WORKFLOW RULE
+
+WORK IN PLANNING MODE ONLY.
+
+Do not implement the application yet. Do not create or overwrite application files, install packages, run migrations, create database tables, or deploy anything.
+
+Your first response must contain:
+
+1. Architecture and technical decisions.
+2. Complete Phase 1 implementation plan.
+3. Ordered task list with acceptance criteria.
+4. Proposed folder structure.
+5. Proposed database schema and RLS policy matrix.
+6. Environment-variable checklist.
+7. Security risks and mitigations.
+8. Testing strategy.
+9. Manual Supabase setup instructions.
+10. Questions requiring my approval.
+
+Then STOP. Wait for my explicit approval before making any changes.
+
+If you already have access to an existing repository, inspect its current structure read-only and incorporate what you find into the plan. Do not replace existing files blindly.
+
+## REQUIRED STACK
+
+Frontend:
+- Next.js App Router
+- TypeScript with strict mode
+- Tailwind CSS
+- shadcn/ui
+- Framer Motion
+- Lucide icons
+- next/image
+- Zod for input validation
+- next-intl for future English, Telugu, and Hindi support
+
+Backend:
+- Supabase PostgreSQL
+- Supabase Auth
+- Supabase Storage
+- Supabase Edge Functions
+- Supabase Realtime
+
+Hosting:
+- Vercel for Next.js
+- Supabase Cloud for backend services
+
+Payments in later phases:
+- Razorpay test mode
+- Cash on Delivery
+
+Do not introduce Express, a separate Node.js API server, Firebase, or another database.
+
+Use supported, compatible versions of dependencies. Check the existing project before proposing installation or configuration changes.
+
+## DESIGN REQUIREMENTS
+
+Use a premium agricultural visual identity.
+
+Colors:
+- Primary green: #166534
+- Leaf accent: #84CC16
+- Warm beige: #F5F0E5
+- Offer amber: #F59E0B
+- White product cards
+- Neutral dark text
+
+Design:
+- Mobile-first responsive layout
+- Large, readable text
+- Inter or Poppins for English
+- Noto Sans Telugu and Noto Sans Devanagari where appropriate
+- Rounded-2xl cards
+- Soft shadows and consistent spacing
+- Sticky search bar
+- Header with location, search, account, and cart areas
+- Mobile bottom navigation
+- Accessible forms and keyboard navigation
+- Subtle animations, respecting reduced-motion preferences
+- Skeleton loaders, empty states, error states, and toast feedback
+
+Avoid generic SaaS dashboards, excessive gradients, fake functionality, placeholder lorem ipsum, and non-agricultural sample products.
+
+## PHASE 1 SCOPE
+
+Phase 1 must establish the project foundation only.
+
+Task 1: Project setup.
+- Configure Next.js App Router and strict TypeScript.
+- Configure Tailwind CSS, shadcn/ui, Framer Motion, and Lucide.
+- Configure linting and formatting.
+- Prepare reusable components and a maintainable folder structure.
+
+Task 2: Design system and application shell.
+- Define color tokens, typography, spacing, radii, and shadows.
+- Build the responsive header and navigation shell.
+- Create a simple KisanMart starter page with realistic agriculture content.
+- Do not build the full shopping experience in Phase 1.
+
+Task 3: Supabase integration.
+- Create separate browser and server Supabase clients using the currently recommended SSR-compatible approach.
+- Configure secure session cookies and authentication handling.
+- Create typed database interfaces.
+- Document how to generate TypeScript types from the Supabase schema.
+
+Task 4: SQL migrations and database security.
+- Propose and then implement version-controlled SQL migrations only after approval.
+- Enable RLS on every application table.
+- Define explicit least-privilege policies.
+- Add foreign keys, indexes, unique constraints, validation constraints, and timestamps.
+- Include repeatable development seed scripts.
+- Do not put service-role credentials in browser code.
+
+Task 5: Authentication foundation.
+- Email/password or email-based authentication.
+- Prepare phone OTP authentication.
+- Prepare Google OAuth.
+- Support role-aware profiles for farmer, seller, and admin.
+- Ensure public signup cannot grant seller or administrator privileges.
+- Protect privileged role changes.
+- Implement login, registration, sign-out, session persistence, and suitable error messages.
+- Mark provider-dependent features as requiring configuration until verified.
+
+Task 6: Verification.
+- Start the app and inspect it in a browser if the environment supports browser testing.
+- Run TypeScript checks, linting, and available automated tests.
+- Verify the database migration workflow and RLS behavior when Supabase credentials are available.
+- Fix errors found.
+- Never report a test as passed unless it actually ran and passed.
+- If browser automation or Supabase credentials are unavailable, state the limitation and provide exact manual verification steps.
+
+## DATABASE REQUIREMENTS
+
+Design the schema to support the complete future roadmap.
+
+Required tables:
+
+1. profiles
+2. addresses
+3. sellers
+4. categories
+5. products
+6. product_variants
+7. inventory
+8. carts
+9. cart_items
+10. wishlists
+11. orders
+12. order_items
+13. payments
+14. shipments
+15. reviews
+16. questions
+17. coupons
+18. crops
+19. crop_stages
+20. crop_products
+21. blog_posts
+22. notifications
+
+Additional tables may be proposed for banners, image metadata, returns, invoices, audit logs, or other requirements when justified.
+
+Define:
+- UUID primary keys where appropriate.
+- Explicit foreign keys and deletion behavior.
+- Numeric price columns with safe precision.
+- Currency support, initially INR.
+- Product status and moderation fields.
+- Seller verification and approval status.
+- Variant-specific prices and stock.
+- Product brand, category, description, specifications, suitable crops, composition, pack sizes, and safety information.
+- Order status and payment status separately.
+- Server-controlled order totals.
+- Inventory consistency and transactional stock updates.
+- Review rating constraints and rating aggregates.
+- Coupon validity and redemption constraints.
+- Creation and update timestamps.
+
+Never rely on client-provided prices or totals for order creation.
+
+Avoid unsafe stock updates, duplicate payment processing, and race conditions. Propose transactional database functions or secure server-side operations where necessary.
+
+## RLS SECURITY MATRIX
+
+Document policies for every table.
+
+Farmers:
+- Read and update permitted fields of their own profiles.
+- Manage their own addresses, carts, wishlists, and other private records.
+- Read their own orders and related order information.
+- Create reviews only for eligible purchases.
+- Never access another customer's private data.
+
+Sellers:
+- Read and update their own seller profile where permitted.
+- Manage only their own products and variants.
+- Access orders and order items associated with their own sales only.
+- Never access other sellers' private business information or unrelated customers' records.
+- Never approve their own seller account or grant themselves elevated privileges.
+
+Administrators:
+- Use server-verified privileges and narrowly scoped administrative policies.
+- Perform authorized moderation and management actions.
+- Never trust role claims supplied by the browser.
+
+Public users:
+- Read active, published categories and products.
+- Never read private addresses, carts, orders, seller documents, payments, or internal moderation data.
+
+Review all foreign-key relationships for indirect information leaks. RLS must be enabled on every application table, and all policies must be explicitly documented.
+
+Do not assume that enabling RLS automatically protects service-role operations. Service-role credentials bypass normal RLS and must remain server-side.
+
+## STORAGE
+
+Plan two buckets:
+
+1. product-images
+   - Public read only for published product assets.
+   - Restricted uploads and updates for authorized sellers.
+   - Validate file size, file type, and ownership.
+   - Prevent arbitrary users from replacing another seller's images.
+
+2. seller-documents
+   - Private bucket.
+   - No public read access.
+   - Authorized seller uploads only for their own verification documents.
+   - Administrative review through trusted, authorized access.
+   - Use short-lived signed URLs when access is needed.
+
+Do not expose license documents publicly.
+
+## SEED DATA
+
+Plan realistic Indian agriculture seed data:
+- At least 50 agriculture products eventually.
+- At least 20 fertilizers.
+- Seeds, pesticides, herbicides, irrigation equipment, farm tools, sprayers, and organic inputs.
+- Sample categories, crops, growth stages, sellers, and promotional banners.
+- INR pricing and realistic package sizes.
+- NPK composition where relevant.
+- Suitable crops and clearly labelled product specifications.
+
+Do not fabricate official certifications, license numbers, product approvals, or agronomic recommendations. Mark illustrative development data as sample data.
+
+Do not treat generic fertilizer quantities or pesticide dosage values as universal recommendations.
+
+## ENVIRONMENT VARIABLES
+
+Plan an .env.example that lists the required variables without real secrets.
+
+Consider:
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY, or the currently recommended publishable-key equivalent
+- SUPABASE_SERVICE_ROLE_KEY, server-only if required by privileged operations
+- NEXT_PUBLIC_SITE_URL
+
+Later-phase integrations may require:
+- Razorpay test keys and webhook secret
+- Gemini API key
+- SMS/OTP provider configuration
+- Google OAuth credentials
+
+Never commit real secrets. Validate required environment variables and provide actionable configuration errors.
+
+## COMPLETE FUTURE ROADMAP
+
+Phase 1: Project setup, design system, Supabase client, schema, RLS, seeds, authentication foundation, and layout.
+
+Phase 2: Home page, category pages, product listings, search, filters, sorting, and product details.
+
+Phase 3: Cart, wishlist, addresses, checkout, Razorpay test integration, COD, orders, tracking, cancellation, returns, and invoice generation.
+
+Phase 4: Seller dashboard, license approval, product management, order management, sales analytics, and admin panel.
+
+Phase 5: Fertilizer calculator, shop by crop, soil health guide, crop calendar, weather widget, advisory content, Gemini-powered AI assistant, voice search, and localization.
+
+Phase 6: Reviews, notifications, Realtime order updates, PWA, accessibility, performance, automated tests, and deployment.
+
+Do not implement future phases during Phase 1.
+
+## TESTING AND ACCEPTANCE CRITERIA
+
+Phase 1 is complete only when the following have been verified or explicitly marked blocked by missing credentials:
+
+- Project starts successfully.
+- Responsive starter page renders on mobile and desktop.
+- TypeScript checks pass.
+- Linting passes.
+- Supabase client configuration is valid.
+- SQL migrations are version controlled and reproducible.
+- RLS is enabled on every application table.
+- Cross-user access restrictions are tested using realistic user roles.
+- Seller ownership and private-document policies are tested.
+- Signup cannot grant admin privileges.
+- Loading, error, and empty states are handled.
+- Environment secrets are not committed or exposed in client bundles.
+- README contains setup, migration, seed, test, and troubleshooting instructions.
+
+## RESPONSE FORMAT FOR THIS FIRST TURN
+
+Return only:
+
+1. Executive summary.
+2. Architecture diagram in Mermaid or text.
+3. Phase 1 task list with dependencies and acceptance criteria.
+4. Proposed folder tree.
+5. Database schema and RLS matrix.
+6. Environment variables and Supabase dashboard setup checklist.
+7. Security and testing plan.
+8. Estimated complexity and assumptions.
+9. Essential clarification questions.
+10. Final approval checkpoint.
+
+Do not edit files or begin implementation.
+
+Finish with: "Phase 1 plan ready. Waiting for your approval before implementation."
+
+After I approve, implement only Phase 1. Work in small, verifiable steps, run the available tests, fix issues, summarize changes, explain how to run the app, and stop for my approval before Phase 2.
